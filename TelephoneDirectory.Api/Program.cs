@@ -1,6 +1,11 @@
+using TelephoneDirectory.Business;
+using TelephoneDirectory.Business.Services.Auth.Abstract;
+using TelephoneDirectory.Business.Services.Auth.Concrete;
 using TelephoneDirectory.DataAccess;
 
+
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Add services to the container.
 
@@ -9,6 +14,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.DataAccessRegistration();
+builder.Services.AddControllers();
+builder.Services.BusinessRegistration();
 
 
 

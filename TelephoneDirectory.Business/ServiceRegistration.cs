@@ -1,9 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TelephoneDirectory.Business.Services.Auth.Abstract;
+using TelephoneDirectory.Business.Services.Auth.Concrete;
 
 namespace TelephoneDirectory.Business
 {
@@ -12,7 +9,7 @@ namespace TelephoneDirectory.Business
         public static void BusinessRegistration(this IServiceCollection services)
         {
 
-
+            services.AddScoped<IAuthService, AuthService>();
         }
-        }
+    }
 }
