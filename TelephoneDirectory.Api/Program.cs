@@ -1,6 +1,7 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using TelephoneDirectory.Business;
-using TelephoneDirectory.Business.Services.Auth.Abstract;
-using TelephoneDirectory.Business.Services.Auth.Concrete;
 using TelephoneDirectory.DataAccess;
 
 
@@ -16,8 +17,24 @@ builder.Services.AddSwaggerGen();
 builder.Services.DataAccessRegistration();
 builder.Services.AddControllers();
 builder.Services.BusinessRegistration();
+builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
+    });
 
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 

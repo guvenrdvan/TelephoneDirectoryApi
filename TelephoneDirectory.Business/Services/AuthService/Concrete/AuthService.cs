@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using TelephoneDirectory.Business.Services.Auth.Abstract;
 using TelephoneDirectory.Business.Services.Auth.Models.Request;
 using TelephoneDirectory.Business.Services.Auth.Models.Response;
+using TelephoneDirectory.Core.Helpers;
 using TelephoneDirectory.Core.ResponseManager;
 using TelephoneDirectory.Core.Utils;
 using TelephoneDirectory.DataAccess.Repositories.Abstract;
@@ -12,10 +14,12 @@ namespace TelephoneDirectory.Business.Services.Auth.Concrete
     public class AuthService : IAuthService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IConfiguration _configuration;
 
-        public AuthService(IUnitOfWork unitOfWork)
+        public AuthService(IUnitOfWork unitOfWork, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
+            _configuration = configuration;
         }
 
         public async Task<BaseResponseModel<GetUserByIdResponseModel>> GetUserById(int userId)
@@ -43,9 +47,21 @@ namespace TelephoneDirectory.Business.Services.Auth.Concrete
                 }
                 else
                 {
-                    return ResponseManager.Ok(new LoginUserResponseModel
+                    var tokenRequest = new TokenRequestModel
                     {
                         Id = ifUserExist.Id,
+                        UserName = ifUserExist.UserName,
+                        FirstName = ifUserExist.FİrstName,
+                        LastName = ifUserExist.LastName,             
+                    };
+
+                    var tokenGenerator = new CreateToken(_configuration);
+                    var token = tokenGenerator.CreateTokenHandler(tokenRequest);
+
+
+                    return ResponseManager.Ok(new LoginUserResponseModel
+                    {
+                        Token = token
                     });
                 }
             }
