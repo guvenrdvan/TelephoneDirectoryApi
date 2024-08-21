@@ -46,14 +46,21 @@ namespace TelephoneDirectory.Business.Services.UserDetailService.Concrete
             return ResponseManager.Ok("Kişi rehbere başarıyla kaydedildi.");
         }
 
-        public async  Task<BaseResponseModel<List<GetAllUserDetailResponseModel>>> GetAllUserDetailById(int UserId)
+
+        public async Task<BaseResponseModel<List<GetAllUserDetailResponseModel>>> GetAllUserDetailById()
         {
+            var userIdClaim = _contextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return ResponseManager.Unauthorized<List<GetAllUserDetailResponseModel>>("Kullanıcı bilgileri alınamadı.");
+            }
+
             var userDetail = await _unitOfWork.Repository<IUserDetailRepository>()
                 .Query()
-                .Where(x => x.UserId == UserId)
+                .Where(x => x.UserId == userId)
                 .ToListAsync();
-                
-            if(userDetail is null || userDetail.Any())
+
+            if (userDetail == null || !userDetail.Any())
             {
                 return ResponseManager.BadRequest<List<GetAllUserDetailResponseModel>>("Kullanıcı detayı bulunamadı!");
             }
@@ -65,8 +72,49 @@ namespace TelephoneDirectory.Business.Services.UserDetailService.Concrete
                 PhoneNumber = x.PhoneNumber,
                 Email = x.Email,
             }).ToList();
+
             return ResponseManager.Ok(responseModel);
+        }
+        public async Task<BaseResponseModel> DeleteUserDetail(DeleteUserDetailRequestModel request)
+        {
+
+            var userDetail = await _unitOfWork.Repository<IUserDetailRepository>().Query().FirstOrDefaultAsync(x => x.Id == request.Id);
+            if (userDetail is not null)
+            {
+                _unitOfWork.OpenTransaction();
+                _unitOfWork.Repository<IUserDetailRepository>().Delete(userDetail);
+                await _unitOfWork.SaveChangesAsync();
+                _unitOfWork.Commit();
+                return ResponseManager.Ok("Kişi Başarıyla silinmiştir.");
+            }
+
+            else
+            {
+                return ResponseManager.BadRequest("Böyle bir kişi yok.");
+            }
+        }
+
+        public async Task<BaseResponseModel> UpdateUserDetail(UpdateUserDetailRequestModel request)
+        {
+            var userDetail = await _unitOfWork.Repository<IUserDetailRepository>().Query().FirstOrDefaultAsync(x=>x.Id == request.Id);
+            if(userDetail is not null)
+            {
+                _unitOfWork.OpenTransaction();
+                userDetail.FirstName = request.FirstName;
+                userDetail.LastName = request.LastName;
+                userDetail.PhoneNumber = request.PhoneNumber;
+                userDetail.Email = request.Email;
+                _unitOfWork.Repository<IUserDetailRepository>().Update(userDetail);
+                await _unitOfWork.SaveChangesAsync();
+                _unitOfWork.Commit();
+                return ResponseManager.Ok("Kişi başarıyla güncellenmiştir");
+            }
+            else
+            {
+                return ResponseManager.BadRequest("Kişi bilgisi güncellenirken bir hata oluştu!");
+            }
 
         }
     }
 }
+

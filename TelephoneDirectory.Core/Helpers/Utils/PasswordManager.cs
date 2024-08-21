@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 
 
-namespace TelephoneDirectory.Core.Utils
+namespace TelephoneDirectory.Core.Helpers.Utils
 {
     public static class PasswordManager
     {

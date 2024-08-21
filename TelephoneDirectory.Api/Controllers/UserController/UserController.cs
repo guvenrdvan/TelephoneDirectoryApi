@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TelephoneDirectory.Business.Services.Auth.Abstract;
 using TelephoneDirectory.Business.Services.Auth.Models.Request;
 
@@ -18,7 +19,7 @@ namespace TelephoneDirectory.Api.Controllers.UserController
             _configuration = configuration;
         }
 
-
+        [AllowAnonymous]
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterationUserRequestModel request)
         {
@@ -26,7 +27,7 @@ namespace TelephoneDirectory.Api.Controllers.UserController
             return HandleResponse(result);
         }
 
-
+        [AllowAnonymous]
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginUserRequestModel request)
         {

@@ -3,9 +3,9 @@ using Microsoft.Extensions.Configuration;
 using TelephoneDirectory.Business.Services.Auth.Abstract;
 using TelephoneDirectory.Business.Services.Auth.Models.Request;
 using TelephoneDirectory.Business.Services.Auth.Models.Response;
-using TelephoneDirectory.Core.Helpers;
+using TelephoneDirectory.Core.Helpers.Token;
+using TelephoneDirectory.Core.Helpers.Utils;
 using TelephoneDirectory.Core.ResponseManager;
-using TelephoneDirectory.Core.Utils;
 using TelephoneDirectory.DataAccess.Repositories.Abstract;
 using TelephoneDirectory.DataAccess.UnitOfWorks.Abstract;
 
@@ -43,7 +43,7 @@ namespace TelephoneDirectory.Business.Services.Auth.Concrete
                 var isVerifed = PasswordManager.VerifyPassword(requestModel.password, ifUserExist.PasswordHash, Convert.FromBase64String(ifUserExist.PasswordSalt));
                 if (!isVerifed)
                 {
-                    return ResponseManager.BadRequest<LoginUserResponseModel>("Şifte Yanlış");
+                    return ResponseManager.BadRequest<LoginUserResponseModel>("Şifre Yanlış");
                 }
                 else
                 {

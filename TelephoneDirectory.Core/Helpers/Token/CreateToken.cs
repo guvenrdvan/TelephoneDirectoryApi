@@ -4,7 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 
-namespace TelephoneDirectory.Core.Helpers
+namespace TelephoneDirectory.Core.Helpers.Token
 {
     public class CreateToken
     {
@@ -14,7 +14,7 @@ namespace TelephoneDirectory.Core.Helpers
         {
             _configuration = configuration;
         }
-        public string CreateTokenHandler ( TokenRequestModel tokenRequest)
+        public string CreateTokenHandler(TokenRequestModel tokenRequest)
         {
             List<Claim> claims = new List<Claim>
             {
@@ -30,11 +30,12 @@ namespace TelephoneDirectory.Core.Helpers
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.UtcNow.AddDays(1),
-                signingCredentials : cred
-                );
-
+             issuer: _configuration["AppSettings:Issuer"],
+             audience: _configuration["AppSettings:Audience"],
+             claims: claims,
+             expires: DateTime.Now.AddMinutes(300),
+             signingCredentials: cred);
+  
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
             return jwt;

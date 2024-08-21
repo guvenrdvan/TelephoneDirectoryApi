@@ -1,11 +1,13 @@
 ﻿using TelephoneDirectory.Core.ResponseManager;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 
 
 
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public abstract class BaseController : ControllerBase
 {
