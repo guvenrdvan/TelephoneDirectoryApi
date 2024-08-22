@@ -46,8 +46,7 @@ namespace TelephoneDirectory.Business.Services.UserDetailService.Concrete
             return ResponseManager.Ok("Kişi rehbere başarıyla kaydedildi.");
         }
 
-
-        public async Task<BaseResponseModel<List<GetAllUserDetailResponseModel>>> GetAllUserDetailById()
+        public async Task<BaseResponseModel<List<GetAllUserDetailResponseModel>>> GetAllUserDetail()
         {
             var userIdClaim = _contextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
@@ -67,6 +66,7 @@ namespace TelephoneDirectory.Business.Services.UserDetailService.Concrete
 
             var responseModel = userDetail.Select(x => new GetAllUserDetailResponseModel
             {
+                Id = x.Id,
                 FirstName = x.FirstName,
                 LastName = x.LastName,
                 PhoneNumber = x.PhoneNumber,
@@ -75,7 +75,8 @@ namespace TelephoneDirectory.Business.Services.UserDetailService.Concrete
 
             return ResponseManager.Ok(responseModel);
         }
-        public async Task<BaseResponseModel> DeleteUserDetail(DeleteUserDetailRequestModel request)
+
+        public async Task<BaseResponseModel<DeleteUserDetailResponseModel>> DeleteUserDetail(DeleteUserDetailRequestModel request)
         {
 
             var userDetail = await _unitOfWork.Repository<IUserDetailRepository>().Query().FirstOrDefaultAsync(x => x.Id == request.Id);
@@ -85,19 +86,28 @@ namespace TelephoneDirectory.Business.Services.UserDetailService.Concrete
                 _unitOfWork.Repository<IUserDetailRepository>().Delete(userDetail);
                 await _unitOfWork.SaveChangesAsync();
                 _unitOfWork.Commit();
-                return ResponseManager.Ok("Kişi Başarıyla silinmiştir.");
+
+                var responseModel = new DeleteUserDetailResponseModel
+                {
+                    Id = userDetail.Id,
+                    FirstName = userDetail.FirstName,
+                    LastName = userDetail.LastName,
+                    PhoneNumber = userDetail.PhoneNumber,
+                    Email = userDetail.Email,
+                };
+                return ResponseManager.Ok(responseModel, " İşlem başarılı, Silinen Kişinin bilgileri");
             }
 
             else
             {
-                return ResponseManager.BadRequest("Böyle bir kişi yok.");
+                return ResponseManager.BadRequest<DeleteUserDetailResponseModel>("Böyle bir kişi yok.");
             }
         }
 
         public async Task<BaseResponseModel> UpdateUserDetail(UpdateUserDetailRequestModel request)
         {
-            var userDetail = await _unitOfWork.Repository<IUserDetailRepository>().Query().FirstOrDefaultAsync(x=>x.Id == request.Id);
-            if(userDetail is not null)
+            var userDetail = await _unitOfWork.Repository<IUserDetailRepository>().Query().FirstOrDefaultAsync(x => x.Id == request.Id);
+            if (userDetail is not null)
             {
                 _unitOfWork.OpenTransaction();
                 userDetail.FirstName = request.FirstName;
@@ -114,6 +124,29 @@ namespace TelephoneDirectory.Business.Services.UserDetailService.Concrete
                 return ResponseManager.BadRequest("Kişi bilgisi güncellenirken bir hata oluştu!");
             }
 
+        }
+
+        public async Task<BaseResponseModel<GetUserDetailByIdResponseModel>> GetUserDetailById(int id)
+        {
+            var userDetail = await _unitOfWork.Repository<IUserDetailRepository>()
+                .Query()
+                .FirstOrDefaultAsync(x => x.Id == id);
+            if (userDetail is not null)
+            {
+                var response = new GetUserDetailByIdResponseModel
+                {
+                    Id = userDetail.Id,
+                    FirstName = userDetail.FirstName,
+                    LastName = userDetail.LastName,
+                    PhoneNumber = userDetail.PhoneNumber,
+                    Email = userDetail.Email,
+                };
+                return ResponseManager.Ok(response);
+            }
+            else
+            {
+                return ResponseManager.BadRequest<GetUserDetailByIdResponseModel>("Kullanıcı  bulunamadı.");
+            }
         }
     }
 }

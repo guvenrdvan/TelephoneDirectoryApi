@@ -22,6 +22,7 @@
                 StatusCode = 200
             };
         }
+
         public static BaseResponseModel BadRequest(string message, List<string> errors = null)
         {
             return new BaseResponseModel

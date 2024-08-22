@@ -1,4 +1,6 @@
-﻿namespace TelephoneDirectory.Core.ResponseManager
+﻿using System.Net;
+
+namespace TelephoneDirectory.Core.ResponseManager
 {
     public class BaseResponseModel
     {
@@ -7,6 +9,7 @@
         public object Data { get; set; }
         public int StatusCode { get; set; }
         public List<string> Errors { get; set; }
+
 
         public BaseResponseModel()
         {

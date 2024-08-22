@@ -1,6 +1,6 @@
 ﻿namespace TelephoneDirectory.Business.Services.UserDetailService.Models.Response
 {
-    public class GetAllUserDetailResponseModel
+    public class DeleteUserDetailResponseModel
     {
         public int Id { get; set; }
         public string FirstName { get; set; }

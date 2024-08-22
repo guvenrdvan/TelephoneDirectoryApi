@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TelephoneDirectory.Business.Services.UserDetail.Abstract;
 using TelephoneDirectory.Business.Services.UserDetailService.Models.Request;
+using TelephoneDirectory.Business.Services.UserDetailService.Models.Response;
+using TelephoneDirectory.Core.ResponseManager;
 
 namespace TelephoneDirectory.Api.Controllers.UserDetailController
 {
@@ -16,42 +18,44 @@ namespace TelephoneDirectory.Api.Controllers.UserDetailController
         }
 
 
-        [HttpGet("get-user-details")]
+        [HttpGet("Get-AllUser-details")]
         public async Task<IActionResult> GetUserDetails()
         {
-            var response = await _userDetailService.GetAllUserDetailById();
+            var response = await _userDetailService.GetAllUserDetail();
             return HandleResponse(response);
-        }
+        }    
 
-
-        [HttpPost("Add-User-Detail")]    
+        [HttpPost("Add-User-details")]    
         public async Task<IActionResult> AddUserDetail([FromBody] AddUserDetailRequestModel request)
         {
             var response = await _userDetailService.AddUserDetail(request);
             return HandleResponse(response);
         }
 
-
-        [HttpDelete("Delete-User-Detail")]
-        public async Task<IActionResult> DeleteUserDetail([FromBody] DeleteUserDetailRequestModel request)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUserDetail([FromRoute]  int id)
         {
+            var request = new DeleteUserDetailRequestModel { Id = id };
             var response = await _userDetailService.DeleteUserDetail(request);
             return HandleResponse(response);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAnimalType([FromRoute] int id, [FromBody] UpdateUserDetailRequestModel request)
+        [HttpGet("Get-UserById-details")]
+        public async Task<IActionResult> GetUserDetailsById(int id)
         {
-            request.Id = id;
-            var result = await _userDetailService.UpdateUserDetail(request);
-            return HandleResponse(result);
+            var response = await _userDetailService.GetUserDetailById(id);
+            return HandleResponse(response);
         }
 
-   /*     [HttpPut("Update-User-Detail")]
-        public async Task<IActionResult> UpdateUserDetail([FromBody] UpdateUserDetailRequestModel request)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUserDetail([FromRoute] int id, [FromBody] UpdateUserDetailRequestModel request)
         {
-            var response = await _userDetailService.UpdateUserDetai(request);
+                
+            request.Id = id;
+            var response = await _userDetailService.UpdateUserDetail(request);
             return HandleResponse(response);
-        }*/
+        }
+
+   
     }
 }
