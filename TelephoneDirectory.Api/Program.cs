@@ -21,7 +21,7 @@ builder.Services.AddControllers();
 builder.Services.BusinessRegistration();
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.Configure<AppSettings>(x => builder.Configuration.GetSection("AppSettings").Bind(x));
+builder.Services.Configure<AppSettingsModel>(x => builder.Configuration.GetSection("AppSettings").Bind(x));
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

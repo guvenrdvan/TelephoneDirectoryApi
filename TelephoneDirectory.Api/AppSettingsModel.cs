@@ -1,6 +1,6 @@
 ﻿namespace TelephoneDirectory.Api
 {
-    public class AppSettings
+    public class AppSettingsModel
     {
         public string Token { get; set; } = string.Empty;
         public string Issuer { get; set; } = string.Empty;
