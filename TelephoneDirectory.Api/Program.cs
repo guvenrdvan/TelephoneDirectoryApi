@@ -21,7 +21,7 @@ builder.Services.AddControllers();
 builder.Services.BusinessRegistration();
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.Configure<AppSettingsModel>(x => builder.Configuration.GetSection("AppSettings").Bind(x));
+builder.Services.Configure<ConfigurationModel>(x => builder.Configuration.GetSection("AppSettings").Bind(x));
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -82,11 +82,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
 app.UseHttpsRedirection();
-app.UseAuthentication();
 
+
+app.UseAuthentication();
 app.UseAuthorization();
+
+
 app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
 
