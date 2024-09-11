@@ -1,0 +1,1 @@
+Telefon Rehber uygulaması için Katmanlı Mimari üzerinde, JWT , PasswordHash teknolojilerini ; Business tarafında CQRS Design Pattern yaklaşımını benimseyen temel CRUD işlemlerini barındıran C# üzerinden yazılmış bir WEB API
